@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Resume Maker - Professional Resume Builder</title>
+    <meta name="description"
+        content="Create professional resumes with our modern resume builder. Choose from multiple templates including 3D designs.">
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Resume Maker</h1>
+            <p>Create Your Professional Resume</p>
+            <div class="auth-section">
+                <div id="auth-container">
+                    <button id="login-btn" onclick="loginWithGoogle()">🔐 Login </button>
+                    <div id="user-info" style="display: none;">
+                        <span id="user-name"></span>
+                        <button id="admin-btn" onclick="window.open('admin.html', '_blank')" style="background: #e74c3c; margin-right: 10px; display: none;"> Admin Panel</button>
+                        <button id="logout-btn" onclick="logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="app-layout">
+            <div class="form-section">
+                <h2>Enter Your Information</h2>
+
+                <div class="form-group">
+                    <h3>Personal Information</h3>
+                    <input type="text" id="fullName" placeholder="Full Name" />
+                    <input type="email" id="email" placeholder="Email Address" />
+                    <input type="tel" id="phone" placeholder="Phone Number" />
+                    <input type="text" id="address" placeholder="Address" />
+                    <input type="url" id="linkedin" placeholder="LinkedIn Profile (optional)" />
+                    <div class="photo-upload">
+                        <label for="photo-upload">Profile Photo:</label>
+                        <input type="file" id="photo-upload" accept="image/*" />
+                        <div id="photo-preview"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <h3>Professional Summary</h3>
+                    <textarea id="summary" placeholder="Write a brief professional summary..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <h3>Work Experience</h3>
+                    <div id="experience-container">
+                        <div class="experience-item">
+                            <input type="text" placeholder="Job Title" class="job-title" />
+                            <input type="text" placeholder="Company Name" class="company" />
+                            <input type="text" placeholder="Duration (e.g., 2020-2023)" class="duration" />
+                            <textarea placeholder="Job description and achievements..."
+                                class="job-description"></textarea>
+                        </div>
+                    </div>
+                    <button type="button" id="add-experience">+ Add Experience</button>
+                </div>
+
+                <div class="form-group">
+                    <h3>Education</h3>
+                    <div id="education-container">
+                        <div class="education-item">
+                            <input type="text" placeholder="Degree" class="degree" />
+                            <input type="text" placeholder="Institution" class="institution" />
+                            <input type="text" placeholder="Year" class="year" />
+                        </div>
+                    </div>
+                    <button type="button" id="add-education">+ Add Education</button>
+                </div>
+
+                <div class="form-group">
+                    <h3>Skills</h3>
+                    <div class="skill-input-group">
+                        <input type="text" id="skillInput" placeholder="Enter a skill" />
+                        <button type="button" onclick="addSkill()">➕ Add Skill</button>
+                    </div>
+                    <div id="skillsPreview" class="skills-preview"></div>
+                    <textarea id="skills" placeholder="List your skills separated by commas..."
+                        style="display: none;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <h3>Certifications</h3>
+                    <div id="certification-container">
+                        <div class="certification-item">
+                            <input type="text" placeholder="Certification Name" class="cert-name" />
+                            <input type="text" placeholder="Issuing Organization" class="cert-org" />
+                            <input type="text" placeholder="Date Obtained" class="cert-date" />
+                        </div>
+                    </div>
+                    <button type="button" id="add-certification">+ Add Certification</button>
+                </div>
+
+                <div class="form-group">
+                    <h3>Resume Template</h3>
+                    <select id="template-selector">
+                        <option value="classic">Classic</option>
+                        <option value="modern">Modern</option>
+                        <option value="minimal">Minimal</option>
+                        <option value="creative">Creative</option>
+                        <option value="professional">Professional</option>
+                        <option value="elegant">Elegant</option>
+                        <option value="neon-3d">3D Neon</option>
+                        <option value="glass-3d">3D Glass</option>
+                        <option value="metallic-3d">3D Metallic</option>
+                        <option value="shadow-3d">3D Shadow Depth</option>
+                        <option value="holographic-3d">3D Holographic</option>
+                        <option value="carbon-3d">3D Carbon Fiber</option>
+                        <option value="gradient-3d">3D Gradient</option>
+                        <option value="matrix-3d">3D Matrix</option>
+                        <option value="floating-3d">3D Floating</option>
+                        <option value="crystal-3d">3D Crystal</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" id="clear-form">Clear All</button>
+                    <button type="button" id="save-data">Save Data</button>
+                    <button type="button" id="load-data">Load Data</button>
+                    <button type="button" id="generate-resume">Generate Resume</button>
+                    <button type="button" id="download-pdf">Download PDF</button>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <h2>Resume Preview</h2>
+                <div id="resume-preview" class="resume-container">
+                    <div class="resume-header">
+                        <div class="header-content">
+                            <div class="header-text">
+                                <h1 id="preview-name">Your Name</h1>
+                                <div class="contact-info">
+                                    <span id="preview-email">email@example.com</span>
+                                    <span id="preview-phone">+1 (555) 123-4567</span>
+                                    <span id="preview-address">City, State</span>
+                                    <span id="preview-linkedin"></span>
+                                </div>
+                            </div>
+                            <div class="photo-container">
+                                <img id="preview-photo" src="" alt="" style="display: none;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="resume-section">
+                        <h2>Professional Summary</h2>
+                        <p id="preview-summary">Your professional summary will appear here...</p>
+                    </div>
+
+                    <div class="resume-section">
+                        <h2>Work Experience</h2>
+                        <div id="preview-experience"></div>
+                    </div>
+
+                    <div class="resume-section">
+                        <h2>Education</h2>
+                        <div id="preview-education"></div>
+                    </div>
+
+                    <div class="resume-section">
+                        <h2>Skills</h2>
+                        <div id="preview-skills"></div>
+                    </div>
+
+                    <div class="resume-section">
+                        <h2>Certifications</h2>
+                        <div id="preview-certifications"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Database -->
+    <script src="database.js"></script>
+
+    <!-- Demo Authentication -->
+    <script>
+        // Demo mode - no Firebase needed
+        console.log('Demo mode active');
+
+        // Check for login status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = localStorage.getItem('currentUser');
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // If no user logged in and not coming from auth page, redirect to login
+            if (!currentUser && !urlParams.get('logged_in')) {
+                console.log('No user logged in, redirecting to auth page...');
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            if (currentUser) {
+                try {
+                    const userData = JSON.parse(currentUser);
+                    console.log('User already logged in:', userData.name);
+                    showUserAsLoggedIn(userData.name);
+                } catch (error) {
+                    console.error('Error parsing user data:', error);
+                    localStorage.removeItem('currentUser');
+                    window.location.href = 'auth.html';
+                    return;
+                }
+            }
+
+            // Check URL parameters for login redirect
+            if (urlParams.get('logged_in') === 'true') {
+                const userName = urlParams.get('name') || 'User';
+                console.log('Login successful, welcome:', userName);
+                showUserAsLoggedIn(userName);
+
+                // Clean up URL parameters
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+
+        // Make functions globally available for demo
+        function loginWithGoogle() {
+            console.log('Redirecting to auth page...');
+            window.location.href = 'auth.html';
+        }
+
+        function logout() {
+            console.log('Demo logout');
+            localStorage.removeItem('currentUser');
+            // Redirect to auth page after logout
+            window.location.href = 'auth.html';
+        }
+
+        // Also make them available on window object for compatibility
+        window.loginWithGoogle = loginWithGoogle;
+        window.logout = logout;
+    </script>
+    <script>
+         document.addEventListener('DOMContentLoaded', function() {
+            const adminBtn = document.getElementById('admin-btn');
+            const userStr = localStorage.getItem('currentUser');
+
+            if (userStr) {
+                const user = JSON.parse(userStr);
+
+                // Show admin panel only for admin users
+                if (adminBtn) {
+                    if (user.email === 'patelsureshkumar67338@gmail.com' || user.displayName === 'Administrator') {
+                        adminBtn.style.display = 'inline-block';
+                    } else {
+                        adminBtn.style.display = 'none';
+                    }
+                }
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>

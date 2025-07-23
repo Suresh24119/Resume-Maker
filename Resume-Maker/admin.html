@@ -1,0 +1,551 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - User Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .admin-header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .admin-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card h3 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .users-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .users-section h2 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .users-table th {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 600;
+        }
+
+        .users-table td {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .action-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .action-btn:hover {
+            background: #c0392b;
+        }
+
+        .action-btn.reset {
+            background: #f39c12;
+        }
+
+        .action-btn.reset:hover {
+            background: #d68910;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .no-users {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .success-message {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+
+        .error-message {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .admin-actions-btn {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+        }
+
+        .admin-actions-btn:hover {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+        }
+
+        .admin-actions-panel {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+            animation: fadeInDown 0.5s ease-out;
+        }
+
+        .admin-actions-panel h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .admin-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .admin-action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .admin-action-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <button class="back-btn" onclick="window.location.href='index.html'">← Back to Resume Maker</button>
+        
+        <div class="admin-header">
+            <h1>Admin Panel</h1>
+            <p>User Database Management</p>
+            <button id="admin-actions-btn" class="admin-actions-btn" onclick="toggleAdminActions()" style="display: none;">
+                Admin Actions
+            </button>
+        </div>
+
+        <div id="message-container"></div>
+
+        <div id="admin-actions-panel" class="admin-actions-panel" style="display: none;">
+            <h3>Administrator Actions</h3>
+            <div class="admin-actions-grid">
+                <button class="admin-action-btn" onclick="exportUserData()">
+                    📥 Export User Data
+                </button>
+                <button class="admin-action-btn" onclick="clearAllUsers()">
+                    🗑️ Clear All Users
+                </button>
+                <button class="admin-action-btn" onclick="generateReport()">
+                    📊 Generate Report
+                </button>
+                <button class="admin-action-btn" onclick="systemMaintenance()">
+                    ⚙️ System Maintenance
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="total-users">0</h3>
+                <p>Total Users</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="recent-logins">0</h3>
+                <p>Recent Logins (24h)</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="new-users">0</h3>
+                <p>New Users (7 days)</p>
+            </div>
+        </div>
+
+        <div class="users-section">
+            <h2>User Management</h2>
+            <div id="users-container">
+                <div class="no-users">Loading users...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script>
+        //  admin panel
+        function checkAdminAccess() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('Access denied. Please log in first.');
+                window.location.href = 'auth.html';
+                return false;
+            }
+
+            try {
+                const userData = JSON.parse(currentUser);
+                if (userData.email !== 'patelsureshkumar67338@gmail.com' && userData.name !== 'Administrator') {
+                    alert('Access denied. Admin privileges required.');
+                    window.location.href = 'index.html';
+                    return false;
+                }
+                
+                // Show admin actions button for Administrator
+                if (userData.name === 'Administrator') {
+                    const adminBtn = document.getElementById('admin-actions-btn');
+                    if (adminBtn) {
+                        adminBtn.style.display = 'inline-block';
+                    }
+                }
+                
+                return true;
+            } catch (error) {
+                alert('Access denied. Invalid user data.');
+                window.location.href = 'auth.html';
+                return false;
+            }
+        }
+
+        // Toggle Admin Actions panel
+        function toggleAdminActions() {
+            const panel = document.getElementById('admin-actions-panel');
+            const btn = document.getElementById('admin-actions-btn');
+            
+            if (panel.style.display === 'none' || !panel.style.display) {
+                panel.style.display = 'block';
+                btn.textContent = ' Hide Admin Actions';
+            } else {
+                panel.style.display = 'none';
+                btn.textContent = ' Admin Actions';
+            }
+        }
+
+        // Admin action functions
+        function exportUserData() {
+            const users = window.userDatabase.getAllUsers();
+            const dataStr = JSON.stringify(users, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = 'user_data_export.json';
+            link.click();
+            
+            adminPanel.showMessage('User data exported successfully!', 'success');
+        }
+
+        function clearAllUsers() {
+            if (confirm('⚠️ WARNING: This will delete ALL users except the admin account. This action cannot be undone!\n\nAre you absolutely sure?')) {
+                const users = window.userDatabase.getAllUsers();
+                let deletedCount = 0;
+                
+                users.forEach(user => {
+                    if (user.email !== 'patelsureshkumar67338@gmail.com') {
+                        window.userDatabase.deleteUser(user.email);
+                        deletedCount++;
+                    }
+                });
+                
+                adminPanel.showMessage(`Successfully deleted ${deletedCount} user accounts`, 'success');
+                adminPanel.loadUsers();
+                adminPanel.updateStats();
+            }
+        }
+
+        function generateReport() {
+            const users = window.userDatabase.getAllUsers();
+            const now = new Date();
+            const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            
+            const report = {
+                generatedAt: now.toISOString(),
+                totalUsers: users.length,
+                newUsersThisWeek: users.filter(u => new Date(u.createdAt) > oneWeekAgo).length,
+                newUsersThisMonth: users.filter(u => new Date(u.createdAt) > oneMonthAgo).length,
+                activeUsersThisWeek: users.filter(u => u.lastLogin && new Date(u.lastLogin) > oneWeekAgo).length,
+                usersNeverLoggedIn: users.filter(u => !u.lastLogin).length,
+                usersByDomain: {}
+            };
+            
+            // Count users by email domain
+            users.forEach(user => {
+                const domain = user.email.split('@')[1];
+                report.usersByDomain[domain] = (report.usersByDomain[domain] || 0) + 1;
+            });
+            
+            const reportStr = JSON.stringify(report, null, 2);
+            const reportBlob = new Blob([reportStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(reportBlob);
+            link.download = `system_report_${now.toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            adminPanel.showMessage('System report generated and downloaded!', 'success');
+        }
+
+        function systemMaintenance() {
+            if (confirm('Run system maintenance? This will:\n• Clean up invalid user data\n• Optimize database storage\n• Update system logs\n\nContinue?')) {
+                // Simulate maintenance tasks
+                let completed = 0;
+                const tasks = ['Cleaning invalid data...', 'Optimizing storage...', 'Updating logs...', 'Finalizing...'];
+                
+                function runTask() {
+                    if (completed < tasks.length) {
+                        adminPanel.showMessage(tasks[completed], 'success');
+                        completed++;
+                        setTimeout(runTask, 800);
+                    } else {
+                        adminPanel.showMessage('System maintenance completed successfully!', 'success');
+                    }
+                }
+                
+                runTask();
+            }
+        }
+
+        // Check access before loading admin panel
+        if (!checkAdminAccess()) {
+            // Will redirect, so stop execution
+        } else {
+            // Continue with admin panel initialization
+        }
+
+        class AdminPanel {
+            constructor() {
+                this.loadUsers();
+                this.updateStats();
+            }
+
+            showMessage(message, type = 'success') {
+                const container = document.getElementById('message-container');
+                container.innerHTML = `<div class="${type}-message">${message}</div>`;
+                
+                setTimeout(() => {
+                    container.innerHTML = '';
+                }, 3000);
+            }
+
+            loadUsers() {
+                const users = window.userDatabase.getAllUsers();
+                const container = document.getElementById('users-container');
+
+                if (users.length === 0) {
+                    container.innerHTML = '<div class="no-users">No users found</div>';
+                    return;
+                }
+
+                let tableHTML = `
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Created</th>
+                                <th>Last Login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                users.forEach(user => {
+                    const createdDate = new Date(user.createdAt).toLocaleDateString();
+                    const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never';
+                    
+                    tableHTML += `
+                        <tr>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${createdDate}</td>
+                            <td>${lastLogin}</td>
+                            <td>
+                                <button class="action-btn reset" onclick="adminPanel.resetUserPassword('${user.email}')">Reset Password</button>
+                                <button class="action-btn" onclick="adminPanel.deleteUser('${user.email}')">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += '</tbody></table>';
+                container.innerHTML = tableHTML;
+            }
+
+            updateStats() {
+                const users = window.userDatabase.getAllUsers();
+                const now = new Date();
+                const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+                const totalUsers = users.length;
+                const recentLogins = users.filter(user => 
+                    user.lastLogin && new Date(user.lastLogin) > oneDayAgo
+                ).length;
+                const newUsers = users.filter(user => 
+                    new Date(user.createdAt) > oneWeekAgo
+                ).length;
+
+                document.getElementById('total-users').textContent = totalUsers;
+                document.getElementById('recent-logins').textContent = recentLogins;
+                document.getElementById('new-users').textContent = newUsers;
+            }
+
+            resetUserPassword(email) {
+                if (confirm(`Are you sure you want to reset the password for ${email}?`)) {
+                    const result = window.userDatabase.resetPassword(email);
+                    if (result.success) {
+                        this.showMessage(`Password reset successful! New temporary password: ${result.tempPassword}`, 'success');
+                    } else {
+                        this.showMessage(result.message, 'error');
+                    }
+                }
+            }
+
+            deleteUser(email) {
+                if (confirm(`Are you sure you want to delete the user ${email}? This action cannot be undone.`)) {
+                    const result = window.userDatabase.deleteUser(email);
+                    if (result.success) {
+                        this.showMessage('User deleted successfully', 'success');
+                        this.loadUsers();
+                        this.updateStats();
+                    } else {
+                        this.showMessage(result.message, 'error');
+                    }
+                }
+            }
+        }
+
+        // Initialize admin panel
+        const adminPanel = new AdminPanel();
+    </script>
+</body>
+</html>
